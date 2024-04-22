@@ -1,11 +1,12 @@
-import {Directive, input} from '@angular/core';
-import {Orientation} from '../primitives/behaviors';
-import {ListboxState, OptionState} from '../primitives/listbox-signals-di';
+import {computed, contentChildren, Directive, inject, input, model} from '@angular/core';
+import {Orientation} from '../primitives-no-signals-no-di/behaviors';
+import {ListboxState, OptionState} from '../primities-signals-di/listbox-signals-di';
 
 
 @Directive({
   standalone: true,
-  selector: 'listbox',
+  selector: 'ui-listbox',
+  exportAs: 'listbox',
   host: {
     'role': 'listbox',
     '[tabIndex]': 'uiState.tabIndex()',
@@ -15,18 +16,21 @@ import {ListboxState, OptionState} from '../primitives/listbox-signals-di';
   },
 })
 export class ListboxComposed<T> {
-  readonly value = input<T>();
+  readonly value = model<T>();
   readonly disabled = input(false);
   readonly orientation = input(Orientation.Vertical);
+  readonly options = contentChildren(OptionComposed);
 
-  protected uiState = new ListboxState({
+  readonly uiState = new ListboxState({
     value: this.value,
     disabled: this.disabled,
     orientation: this.orientation,
+    options: computed(() => this.options().map(o => o.uiState)),
   });
 }
 
 @Directive({
+  selector: 'ui-option',
   standalone: true,
   host: {
     'role': 'option',
@@ -38,8 +42,11 @@ export class ListboxComposed<T> {
 export class OptionComposed<T> {
   readonly value = input<T>();
   protected readonly disabled = input(false);
-  protected uiState = new OptionState({
+  protected listbox = inject(ListboxComposed);
+
+  readonly uiState: OptionState<T> = new OptionState({
     value: this.value,
     disabled: this.disabled,
+    listbox: this.listbox.uiState,
   });
 }

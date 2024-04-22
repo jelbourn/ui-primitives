@@ -17,13 +17,13 @@ describe('AppComponent', () => {
   it(`should have the 'ui-primitives' title`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app.title).toEqual('ui-primitives');
+    expect(app.title).toEqual('ui-primitives-no-signals-no-di');
   });
 
   it('should render title', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, ui-primitives');
+    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, ui-primitives-no-signals-no-di');
   });
 });

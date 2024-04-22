@@ -1,1 +1,16 @@
 /* You can add global styles to this file, and also import other style files */
+
+
+[role="listbox"] {
+  display: block;
+  border: 1px solid black;
+}
+
+[role="option"] {
+  display: block;
+  padding: 8px;
+
+  &.active {
+    background-color: aquamarine;
+  }
+}
