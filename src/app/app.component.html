@@ -3,13 +3,32 @@
 
 <h2>Listbox</h2>
 
-<ui-listbox #listbox="listbox">
-  <ui-option value="garlic">Garlic</ui-option>
-  <ui-option value="onion">Onion</ui-option>
-  <ui-option value="tomato">Tomato</ui-option>
-</ui-listbox>
+<ul uiListbox #listbox="listbox">
+  <li uiOption value="garlic">Garlic</li>
+  <li uiOption value="onion">Onion</li>
+  <li uiOption value="tomato">Tomato</li>
+</ul>
 
 <hr>
 
 <p>Selected value: {{listbox.value()}}</p>
 <p>Option Id: {{listbox.uiState.activeDescendantId()}}</p>
+
+
+<h2>Menu</h2>
+
+<ul uiMenu #menu="menu">
+  <li>
+    <button uiMenuItem>Garlic</button>
+  </li>
+  <li>
+    <button uiMenuItem>Onion</button>
+  </li>
+  <li>
+    <button uiMenuItem>Tomato</button>
+  </li>
+</ul>
+
+<hr>
+
+<p>Item Id: {{menu.uiState.activeDescendantId()}}</p>

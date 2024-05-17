@@ -7,6 +7,7 @@ import {
   input,
   model, Signal
 } from '@angular/core';
+import {MenuInputs, MenuItemInputs, MenuState} from '../primities-signals-di/menu';
 import {Orientation} from '../primitives-no-signals-no-di/behaviors';
 import {
   IdFactory,
@@ -18,45 +19,47 @@ import {
 
 @Directive({
   standalone: true,
-  selector: '[uiListbox]',
-  exportAs: 'listbox',
+  selector: '[uiMenuTrigger]',
+  exportAs: 'menuTrigger',
+
+})
+export class UiMenuTrigger { }
+
+@Directive({
+  standalone: true,
+  selector: '[uiMenu]',
+  exportAs: 'menu',
   host: {
-    'role': 'listbox',
+    'role': 'menu',
     '[tabIndex]': 'uiState.tabIndex()',
-    '[attr.aria-disabled]': 'uiState.disabled()',
+    '[attr.aria-orientation]': 'uiState.orientation()',
     '[attr.aria-activedescendant]': 'uiState.activeDescendantId() ?? null',
     '(keydown)': 'uiState.handleKey($event)',
   },
 })
-export class ListboxComposed<T> implements ListboxInputs<T> {
-  readonly id = input<string>(inject(IdFactory)());
-  readonly value = model<T>();
-  readonly disabled = input(false);
+export class MenuComposed<T> implements MenuInputs {
   readonly orientation = input(Orientation.Vertical);
-  readonly options = contentChildren<OptionInputs<T>>(OptionComposed);
-  readonly setValue = this.value.set;
+  readonly items = contentChildren<MenuItemInputs>(MenuItemComposed, {descendants: true});
 
-  readonly uiState = new ListboxState(this);
+  readonly uiState = new MenuState(this);
 }
 
 @Directive({
-  selector: '[uiOption]',
+  selector: '[uiMenuItem]',
   standalone: true,
   host: {
-    'role': 'option',
+    'role': 'menuitem',
     '[id]': 'uiState().id()',
     '[attr.aria-disabled]': 'uiState().disabled()',
-    '[attr.aria-selected]': 'uiState().selected()',
     '[class.active]': 'uiState().active()',
   },
 })
-export class OptionComposed<T> implements OptionInputs<T> {
+export class MenuItemComposed implements MenuItemInputs {
   readonly id = input<string>(inject(IdFactory)());
-  readonly value = input.required<T>();
   readonly disabled = input(false);
-  private readonly listbox = inject(ListboxComposed);
+  private readonly menu = inject(MenuComposed);
   private readonly elementRef = inject(ElementRef<HTMLElement>);
   displayText = () => this.elementRef.nativeElement.textContent ?? '';
 
-  readonly uiState = this.listbox.uiState.getOptionById(this.id);
+  readonly uiState = this.menu.uiState.getItemById(this.id);
 }

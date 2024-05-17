@@ -11,6 +11,8 @@ import {
 } from './behaviors';
 import {KeyScheme, ListNavigationKeyScheme, ListSelectionKeyScheme} from './key-schemes';
 
+// TODO: consider not letting IDs be inputs at all and always generate them
+
 // for demonstration purposes only
 export const IS_RTL = new InjectionToken<boolean>('IS_RTL');
 export const IdFactory = new InjectionToken<() => string>('IdFactory');
@@ -83,7 +85,6 @@ export class ListboxState<T> {
   }
 
   activateNextItem(): void {
-    debugger;
     const options = this.options();
     const currentIndex = options.findIndex(o => o.id() === this.activeDescendantId()) ?? 0;
     this.activateOption(options[(currentIndex + 1) % options.length]);

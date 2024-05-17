@@ -1,16 +1,29 @@
 /* You can add global styles to this file, and also import other style files */
 
 
-[role="listbox"] {
+[role="listbox"], [role="menu"] {
   display: block;
   border: 1px solid black;
 }
 
-[role="option"] {
+[role="option"], [role="menuitem"] {
   display: block;
   padding: 8px;
 
   &.active {
     background-color: aquamarine;
   }
+}
+
+button {
+  user-select: none;
+  cursor: pointer;
+  outline: none;
+  border: none;
+  -webkit-tap-highlight-color: transparent;
+  background: transparent;
+}
+
+li, ul {
+  list-style: none;
 }
