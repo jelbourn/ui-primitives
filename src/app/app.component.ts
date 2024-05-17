@@ -2,7 +2,7 @@ import {Component} from '@angular/core';
 import {RouterOutlet} from '@angular/router';
 import {ListboxComposed, OptionComposed} from '../composition/listbox-composed';
 import {ListNavigationKeyScheme, ListSelectionKeyScheme} from '../primities-signals-di/key-schemes';
-import {IdFactory, IS_RTL} from '../primities-signals-di/listbox-signals-di';
+import {IdFactory, IS_RTL} from '../primities-signals-di/listbox2';
 
 let nextId = 0;
 

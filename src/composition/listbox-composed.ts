@@ -1,7 +1,20 @@
-import {computed, contentChildren, Directive, inject, input, model} from '@angular/core';
+import {
+  computed,
+  contentChildren,
+  Directive,
+  ElementRef,
+  inject,
+  input,
+  model, Signal
+} from '@angular/core';
 import {Orientation} from '../primitives-no-signals-no-di/behaviors';
-import {ListboxState, OptionState} from '../primities-signals-di/listbox-signals-di';
-
+import {
+  IdFactory,
+  ListboxInputs,
+  ListboxState,
+  OptionInputs,
+  OptionState
+} from '../primities-signals-di/listbox2';
 
 @Directive({
   standalone: true,
@@ -15,18 +28,15 @@ import {ListboxState, OptionState} from '../primities-signals-di/listbox-signals
     '(keydown)': 'uiState.handleKey($event)',
   },
 })
-export class ListboxComposed<T> {
+export class ListboxComposed<T> implements ListboxInputs<T> {
+  readonly id = input<string>(inject(IdFactory)());
   readonly value = model<T>();
   readonly disabled = input(false);
   readonly orientation = input(Orientation.Vertical);
-  readonly options = contentChildren(OptionComposed);
+  readonly options = contentChildren<OptionInputs<T>>(OptionComposed);
+  readonly setValue = this.value.set;
 
-  readonly uiState = new ListboxState({
-    value: this.value,
-    disabled: this.disabled,
-    orientation: this.orientation,
-    options: computed(() => this.options().map(o => o.uiState)),
-  });
+  readonly uiState = new ListboxState(this);
 }
 
 @Directive({
@@ -34,19 +44,19 @@ export class ListboxComposed<T> {
   standalone: true,
   host: {
     'role': 'option',
-    '[attr.aria-disabled]': 'uiState.disabled()',
-    '[attr.aria-selected]': 'uiState.selected()',
-    '[class.active]': 'uiState.active()',
+    '[id]': 'uiState().id()',
+    '[attr.aria-disabled]': 'uiState().disabled()',
+    '[attr.aria-selected]': 'uiState().selected()',
+    '[class.active]': 'uiState().active()',
   },
 })
-export class OptionComposed<T> {
-  readonly value = input<T>();
-  protected readonly disabled = input(false);
-  protected listbox = inject(ListboxComposed);
+export class OptionComposed<T> implements OptionInputs<T> {
+  readonly id = input<string>(inject(IdFactory)());
+  readonly value = input.required<T>();
+  readonly disabled = input(false);
+  private readonly listbox = inject(ListboxComposed);
+  private readonly elementRef = inject(ElementRef<HTMLElement>);
+  displayText = () => this.elementRef.nativeElement.textContent ?? '';
 
-  readonly uiState: OptionState<T> = new OptionState({
-    value: this.value,
-    disabled: this.disabled,
-    listbox: this.listbox.uiState,
-  });
+  readonly uiState = this.listbox.uiState.getOptionById(this.id);
 }
